@@ -50,5 +50,3 @@ def delete_client_profile(request, profile_uuid):
     profile = get_object_or_404(ClientProfile, pk=profile_uuid)
     profile.delete()
     return JsonResponse({'message': 'Client profile deleted successfully'}, status=204)
-
- 

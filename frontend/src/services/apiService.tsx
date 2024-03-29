@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://127.0.0.1:8000/client-profiles/';
+const BASE_URL = 'http://127.0.0.1:8000/';
 
 const apiService = {
   login: async (username: string, password: string) => {
@@ -41,14 +41,11 @@ const apiService = {
   },
   sendProfileData: async (profileData: any) => {
     try {
-      // Make a POST request to the backend API endpoint to send profile data
-      const response = await axios.post(BASE_URL + 'profile', profileData);
-      // Return the response data if needed
+      const response = await axios.post(BASE_URL + 'client-profiles/', profileData);
       return response.data;
     } catch (error) {
-      // Handle error if the request fails
       console.error('Error sending profile data:', error);
-      throw error; // Rethrow the error to handle it in the component
+      throw error;
     }
   },
   calculateFuelQuote: async (quoteData: {

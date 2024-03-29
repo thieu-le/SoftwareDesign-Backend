@@ -1,25 +1,24 @@
 import React, { useState } from 'react';
-import apiService from '../services/apiService'; // Import the apiService
+import apiService from '../services/apiService';
 
-interface RegisterProps {
-  onSubmit: (username: string, password: string) => void;
-  onLogin: () => void; // New property for the login function
-}
-
-const Register: React.FC<RegisterProps> = ({ onSubmit, onLogin }) => {
+const Register: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
+
     try {
-      // Call the registerUser API function with the username and password
       await apiService.registerUser(username, password);
-      // If registration is successful, call the onSubmit function (passed from parent component)
-      onSubmit(username, password);
+      setLoading(false);
+      // Redirect or perform any necessary action upon successful registration
     } catch (error) {
-      // Handle registration error (e.g., display error message)
-      console.error('Registration failed:', error);
+      setError('Registration failed. Please try again.');
+      setLoading(false);
     }
   };
 
@@ -43,8 +42,10 @@ const Register: React.FC<RegisterProps> = ({ onSubmit, onLogin }) => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        <button type="submit">Register</button>
-        <button type="button" onClick={onLogin}>Login</button> {/* Button to trigger the login function */}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        <button type="submit" disabled={loading}>
+          {loading ? 'Registering...' : 'Register'}
+        </button>
       </form>
     </div>
   );

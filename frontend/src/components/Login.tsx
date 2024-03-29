@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
-import apiService from '../services/apiService'; // Import the apiService
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import apiService from '../services/apiService';
 
-interface LoginProps {
-  onLoginSuccess: (username: string, password: string) => void; // Update the function signature
-  onRegister: () => void;
-}
-
-
-const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegister }) => {
+const Login: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -19,12 +14,10 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegister }) => {
     setError(null);
 
     try {
-      // Make API request to login
       await apiService.login(username, password);
       setLoading(false);
-      onLoginSuccess(username, password); // Call onLoginSuccess if login is successful
+      // Redirect or perform any necessary action upon successful login
     } catch (error) {
-      // Handle login error
       setError('Invalid credentials. Please try again.');
       setLoading(false);
     }
@@ -51,10 +44,11 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegister }) => {
           />
         </div>
         {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit" disabled={loading}>
+        <button type="submit" disabled={loading} className="login-button">
           {loading ? 'Logging in...' : 'Login'}
         </button>
-        <button type="button" onClick={onRegister}>Register</button>
+        {/* Link to the Register page styled as a button */}
+        <Link to="/register" className="register-button" style={{ marginLeft: '10px' }}>Register</Link>
       </form>
     </div>
   );

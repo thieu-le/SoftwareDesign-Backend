@@ -95,7 +95,7 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> =  ({clientProfile}) => {
                         readOnly
                     />
                 </div>
-                <button type = "submit">Submit</button>
+                <button type = "submit">Calculate</button>
             </form>
         </div>
     );

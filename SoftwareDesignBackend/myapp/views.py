@@ -3,9 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.http import JsonResponse, HttpResponseNotAllowed
 from .models import ClientProfile, FuelQuote  # Import FuelQuote model
 from .serializers import ClientProfileSerializer
-
-# Import fuel app views
-from fuel.views import fuel_quote_form, quote_history
+from django.contrib.auth.decorators import login_required  # Import login_required decorator
 
 def login_view(request):
     if request.method == 'POST':
@@ -54,6 +52,16 @@ def delete_client_profile(request, profile_uuid):
     profile.delete()
     return JsonResponse({'message': 'Client profile deleted successfully'}, status=204)
 
-# Integrate fuel app views
-fuel_quote_form = login_required(fuel_quote_form)
-quote_history = login_required(quote_history)
+# Define the fuel_quote_form function
+@login_required
+def fuel_quote_form(request):
+    if request.method == 'POST':
+        # Handle form submission and calculations (not shown)
+        pass
+    return render(request, 'fuel_quote_form.html')
+
+# Define the quote_history function
+@login_required
+def quote_history(request):
+    client_quotes = FuelQuote.objects.filter(client=request.user.clientprofile)
+    return render(request, 'quote_history.html', {'client_quotes': client_quotes})

@@ -1,8 +1,11 @@
-from django.shortcuts import render, HttpResponse, get_object_or_404
+from django.shortcuts import render, HttpResponse, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login
 from django.http import JsonResponse, HttpResponseNotAllowed
-from .models import ClientProfile
+from .models import ClientProfile, FuelQuote  # Import FuelQuote model
 from .serializers import ClientProfileSerializer
+
+# Import fuel app views
+from fuel.views import fuel_quote_form, quote_history
 
 def login_view(request):
     if request.method == 'POST':
@@ -50,3 +53,7 @@ def delete_client_profile(request, profile_uuid):
     profile = get_object_or_404(ClientProfile, pk=profile_uuid)
     profile.delete()
     return JsonResponse({'message': 'Client profile deleted successfully'}, status=204)
+
+# Integrate fuel app views
+fuel_quote_form = login_required(fuel_quote_form)
+quote_history = login_required(quote_history)

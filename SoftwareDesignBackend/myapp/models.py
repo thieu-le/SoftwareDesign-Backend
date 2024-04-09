@@ -4,14 +4,13 @@ from django.contrib.auth.models import User
 class ClientProfile(models.Model):
     # Define fields for the ClientProfile model
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    address = models.CharField(max_length=255)
-
-    full_name = models.CharField(max_length=255)
-    address1 = models.CharField(max_length=255)
+    address = models.CharField(max_length=255, default="N/A")
+    full_name = models.CharField(max_length=255, default="")
+    address1 = models.CharField(max_length=255, default="")
     address2 = models.CharField(max_length=255, blank=True, null=True)
-    city = models.CharField(max_length=100)
-    state = models.CharField(max_length=2)  # Assuming state abbreviations like 'NY', 'CA', etc.
-    zipcode = models.CharField(max_length=10)  # Assuming ZIP code format like '12345'
+    city = models.CharField(max_length=100, default="")
+    state = models.CharField(max_length=2, default="")
+    zipcode = models.CharField(max_length=10, default="")
 
     # Add any additional fields as needed for the client profile
 

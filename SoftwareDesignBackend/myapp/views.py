@@ -1,10 +1,11 @@
 from django.shortcuts import render, HttpResponse, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login
 from django.http import JsonResponse, HttpResponseNotAllowed
-from .models import ClientProfile, FuelQuote  # Import FuelQuote model
+from .models import ClientProfile, FuelQuote, State  # Import FuelQuote model
 from .serializers import ClientProfileSerializer
 from django.contrib.auth.decorators import login_required  # Import login_required decorator
-
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -46,6 +47,18 @@ def update_client_profile(request, profile_uuid):
         return JsonResponse(serializer.errors, status=400)
 
     return JsonResponse({'error': 'Only PUT method is allowed'}, status=405)
+def register_view(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'message': 'Registration successful'}, status=201)
+        else:
+            errors = form.errors.as_json()
+            return JsonResponse({'errors': errors}, status=400)
+    else:
+        form = UserCreationForm()
+    return render(request, 'register.html', {'form': form})
 
 def delete_client_profile(request, profile_uuid):  
     profile = get_object_or_404(ClientProfile, pk=profile_uuid)

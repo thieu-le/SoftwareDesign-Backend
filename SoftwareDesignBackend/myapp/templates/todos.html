@@ -1,4 +1,6 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+
+{% block content %}
 <h1>Todo List</h1>
 <ul>
     {% for todo in todos %}
@@ -7,4 +9,11 @@
     </li>
     {% endfor %}
 </ul>
+
+<form method="post">
+    {% csrf_token %}
+    <!-- Your form fields go here -->
+    <input type="submit" value="Submit">
+</form>
+
 {% endblock %}

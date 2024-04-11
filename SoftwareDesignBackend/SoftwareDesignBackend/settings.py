@@ -42,13 +42,13 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -124,11 +124,7 @@ STATIC_URL = 'static/'
 # CORS settings
 # CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5174",
-    "http://localhost:5173",  # Add your frontend base URL here
-    "http://localhost:8000",
-]
+CORS_ALLOW_ALL_ORIGINS = True
 
 
 # Default primary key field type

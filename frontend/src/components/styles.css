@@ -17,10 +17,11 @@ h2 {
   margin-bottom: 20px;
   align-items: center;
   justify-content: center;
+  text-align: center;
 }
 
 /* Global Styling*/
-input[type="text" ],input[type="password"], input[type="number"], input[type = "date"], #state {
+input[type="text" ],input[type="password"], input[type="number"], input[type = "date"], #state, .confirmation-page {
   /* Add your styles here */
   width: 100%;
   padding: 10px;
@@ -30,6 +31,10 @@ input[type="text" ],input[type="password"], input[type="number"], input[type = "
   margin-bottom: 10px; /* Add margin to separate it from other elements */
   background-color: white;
   color:black;
+}
+
+.confirmation-page{
+  text-align: center;
 }
 
 

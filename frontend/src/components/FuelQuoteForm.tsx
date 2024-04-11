@@ -31,7 +31,6 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> =  ({clientProfile}) => {
         setDeliveryDate(date);
     };
     
-
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 

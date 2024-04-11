@@ -5,7 +5,7 @@ const BASE_URL = 'http://127.0.0.1:8000/';
 const apiService = {
   login: async (username: string, password: string) => {
     try {
-      const response = await axios.post(BASE_URL + 'login', { username, password });
+      const response = await axios.post(BASE_URL + 'login/', { username, password });
       return response.data;
     } catch (error) {
       console.error('Error logging in:', error);
@@ -32,7 +32,7 @@ const apiService = {
   },
   registerUser: async (username: string, password: string) => {
     try {
-      const response = await axios.post(BASE_URL + 'register', { username, password });
+      const response = await axios.post(BASE_URL + 'register/', { username, password });
       return response.data;
     } catch (error) {
       console.error('Error registering user:', error);

@@ -26,13 +26,13 @@ const Register: React.FC = () => {
   return (
     <div>
       <h2>Register</h2>
-      <form onSubmit={handleFormSubmit}>
+      <form onSubmit={handleFormSubmit} action="/register/" method="post">
         <div>
           <label></label>
           <input
             type="text"
             value={username}
-            placeholder = 'Username'
+            placeholder='Username'
             onChange={(e) => setUsername(e.target.value)}
           />
         </div>
@@ -41,7 +41,7 @@ const Register: React.FC = () => {
           <input
             type="password"
             value={password}
-            placeholder = 'Password'
+            placeholder='Password'
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>

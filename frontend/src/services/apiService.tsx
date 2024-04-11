@@ -1,5 +1,11 @@
 import axios from 'axios';
 
+function getCsrfToken() {
+  const csrfTokenElement = document.querySelector('[name=csrfmiddlewaretoken]') as HTMLInputElement;
+  return csrfTokenElement ? csrfTokenElement.value : '';
+}
+
+
 const BASE_URL = 'http://127.0.0.1:8000/';
 
 const apiService = {
@@ -14,7 +20,12 @@ const apiService = {
   },
   fetchData: async () => {
     try {
-      const response = await axios.get(BASE_URL + 'data');
+      const csrfToken = getCsrfToken(); // Get CSRF token
+      const response = await axios.get(BASE_URL + 'data', {
+        headers: {
+          'X-CSRFToken': csrfToken // Include CSRF token in headers
+        }
+      });
       return response.data;
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -63,7 +74,12 @@ const apiService = {
   },
   fetchFuelQuoteHistory: async () => {
     try {
-      const response = await axios.get(BASE_URL + 'fuelquote/history');
+      const csrfToken = getCsrfToken(); // Get CSRF token
+      const response = await axios.get(BASE_URL + 'fuelquote/history', {
+        headers: {
+          'X-CSRFToken': csrfToken // Include CSRF token in headers
+        }
+      });
       return response.data;
     } catch (error) {
       console.error('Error fetching fuel quote history:', error);

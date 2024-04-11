@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import apiService from '../services/apiService';
+import './styles.css';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -28,27 +29,26 @@ const Login: React.FC = () => {
       <h2>Login</h2>
       <form onSubmit={handleFormSubmit}>
         <div>
-          <label>Username:</label>
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            placeholder='Username'
           />
         </div>
         <div>
-          <label>Password:</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            placeholder = 'Password'
           />
         </div>
         {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit" disabled={loading} className="login-button">
-          {loading ? 'Logging in...' : 'Login'}
+        <button type="submit" disabled={loading} className="login-button">{loading ? 'Logging in...' : 'Login'} 
         </button>
         {/* Link to the Register page styled as a button */}
-        <Link to="/register" className="register-button" style={{ marginLeft: '10px' }}>Register</Link>
+        <Link to="/register" className="register-button" style={{ marginLeft: '10px', marginTop: '10px' }}>Register</Link>
       </form>
     </div>
   );

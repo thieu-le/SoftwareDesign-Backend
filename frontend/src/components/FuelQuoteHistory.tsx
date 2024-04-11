@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import apiService from '../services/apiService';
+import './styles.css';
 
 interface FuelQuote {
   gallonsRequested: number;
@@ -29,7 +30,7 @@ const FuelQuoteHistory = () => {
 
   return (
     <div>
-      <h1>Fuel Quote History</h1>
+      <h2>Fuel Quote History</h2>
       {quotes.length === 0 ? (
         <p>No data available</p>
       ) : (

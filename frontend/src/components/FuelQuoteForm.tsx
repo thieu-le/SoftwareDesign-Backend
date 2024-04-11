@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import apiService from '../services/apiService';
+import './styles.css';
 
 interface FuelQuoteFormProps {
     clientProfile: {
@@ -22,9 +23,14 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> =  ({clientProfile}) => {
     };
     
 
-    const dateChanges = (date: Date | null) => {
+    const dateChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        // Convert the input value to a Date object
+        const date = value ? new Date(value) : null;
+        // Set the delivery date state
         setDeliveryDate(date);
     };
+    
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -50,7 +56,7 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> =  ({clientProfile}) => {
             <h2>Fuel Quote Form</h2>
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label htmlFor="gallonsRequested">Gallons Requested *</label>
+                    <label htmlFor="gallonsRequested">Gallons Requested </label>
                     <input 
                         type="number"
                         id="gallonsRequested"
@@ -60,7 +66,7 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> =  ({clientProfile}) => {
                     />
                 </div>
                 <div>
-                    <label htmlFor='deliveryAddress'>DeliveryAddress</label>
+                    <label htmlFor='deliveryAddress'>Delivery Address</label>
                     <input
                         type="text"
                         id="deliveryAddress"
@@ -70,15 +76,17 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> =  ({clientProfile}) => {
                 </div>
                 <div>
                     <label htmlFor="deliveryDate">Delivery Date</label>
-                    <DatePicker 
+                    <input
+                        type="date"
                         id="deliveryDate"
-                        selected = {deliveryDate}
+                        name="deliveryDate"
+                        value="{deliveryDate}"
                         onChange={dateChanges}
-                        dateFormat="MM/dd/yyyy"
+          
                     />
                 </div>
                 <div>
-                    <label htmlFor="suggestedPrice">Suggested Price per gallon</label>
+                    <label htmlFor="suggestedPrice">Suggested Price per Gallon</label>
                     <input
                         type="number"
                         id="suggestedPrice"
@@ -87,7 +95,7 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> =  ({clientProfile}) => {
                     />    
                 </div>
                 <div>
-                    <label htmlFor="totalAmountDue">Total Amount Due</label>
+                    <label htmlFor="totalAmountDue">Total Amount Due ($)</label>
                     <input
                         type="number"
                         id="totalAmountDue"

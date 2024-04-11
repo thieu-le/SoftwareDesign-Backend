@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import apiService from '../services/apiService';
+import './styles.css';
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -27,18 +28,20 @@ const Register: React.FC = () => {
       <h2>Register</h2>
       <form onSubmit={handleFormSubmit}>
         <div>
-          <label>Username:</label>
+          <label></label>
           <input
             type="text"
             value={username}
+            placeholder = 'Username'
             onChange={(e) => setUsername(e.target.value)}
           />
         </div>
         <div>
-          <label>Password:</label>
+          <label></label>
           <input
             type="password"
             value={password}
+            placeholder = 'Password'
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>

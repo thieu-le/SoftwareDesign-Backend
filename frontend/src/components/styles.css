@@ -1,0 +1,36 @@
+/* Global styles */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: white;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+  height: 100vh; /* Make sure container takes full height of viewport */
+}
+
+h2 {
+  font-size: 25;
+  color: #007bff;
+  margin-bottom: 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Global Styling*/
+input[type="text" ],input[type="password"], input[type="number"], input[type = "date"], #state {
+  /* Add your styles here */
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px; /* Add margin to separate it from other elements */
+  background-color: white;
+  color:black;
+}
+
+
+

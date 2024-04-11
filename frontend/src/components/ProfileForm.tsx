@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import apiService from '../services/apiService'; // Import the apiService
+import './styles.css';
 
 const ProfileForm: React.FC = () => {
   const [fullName, setFullName] = useState('');
@@ -44,7 +45,7 @@ const ProfileForm: React.FC = () => {
     <form onSubmit={handleSubmit}>
       <h2>Profile Management</h2>
       <div>
-        <label htmlFor="fullName">Full Name (Max 50 characters):</label>
+        <label htmlFor="fullName">Full Name (Max 50 characters)</label>
         <input
           type="text"
           id="fullName"
@@ -56,7 +57,7 @@ const ProfileForm: React.FC = () => {
         />
       </div>
       <div>
-        <label htmlFor="address1">Address 1 (Max 100 characters):</label>
+        <label htmlFor="address1">Address 1 (Max 100 characters)</label>
         <input
           type="text"
           id="address1"
@@ -68,7 +69,7 @@ const ProfileForm: React.FC = () => {
         />
       </div>
       <div>
-        <label htmlFor="address2">Address 2 (Max 100 characters):</label>
+        <label htmlFor="address2">Address 2 (Max 100 characters)</label>
         <input
           type="text"
           id="address2"
@@ -79,7 +80,7 @@ const ProfileForm: React.FC = () => {
         />
       </div>
       <div>
-        <label htmlFor="city">City (Max 100 characters):</label>
+        <label htmlFor="city">City (Max 100 characters)</label>
         <input
           type="text"
           id="city"
@@ -91,7 +92,7 @@ const ProfileForm: React.FC = () => {
         />
       </div>
       <div>
-        <label htmlFor="state">State:</label>
+        <label htmlFor="state">State</label>
         <select id="state" value={state} onChange={(e) => setState(e.target.value)} required>
           <option value="">Select State</option>
           {states.map((stateOption, index) => (
@@ -100,7 +101,7 @@ const ProfileForm: React.FC = () => {
         </select>
       </div>
       <div>
-        <label htmlFor="zipcode">Zipcode (Min 5 characters):</label>
+        <label htmlFor="zipcode">Zipcode (Min 5 characters)</label>
         <input
           type="text"
           id="zipcode"

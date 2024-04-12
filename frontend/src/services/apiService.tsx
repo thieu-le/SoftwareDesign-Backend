@@ -1,29 +1,37 @@
 import axios from 'axios';
 
+const BASE_URL = 'http://127.0.0.1:8000/';
+
 function getCsrfToken() {
   const csrfTokenElement = document.querySelector('[name=csrfmiddlewaretoken]') as HTMLInputElement;
   return csrfTokenElement ? csrfTokenElement.value : '';
 }
 
-
-const BASE_URL = 'http://127.0.0.1:8000/';
-
 const apiService = {
-  login: async (username: string, password: string) => {
+  registerUser: async (username: string, password: string, csrfToken: string) => {
     try {
-      const response = await axios.post(BASE_URL + 'login/', { username, password });
+      console.log('Username:', username);
+      console.log('Password:', password);
+      console.log('CSRF Token:', csrfToken);
+
+      const response = await axios.post(BASE_URL + 'register/', { username, password }, {
+        headers: {
+          'X-CSRFToken': csrfToken
+        }
+      });
       return response.data;
     } catch (error) {
-      console.error('Error logging in:', error);
-      throw error; // You can handle this error in your component
+      console.error('Error registering user:', error);
+      throw error;
     }
   },
+
   fetchData: async () => {
     try {
       const csrfToken = getCsrfToken(); // Get CSRF token
       const response = await axios.get(BASE_URL + 'data', {
         headers: {
-          'X-CSRFToken': csrfToken // Include CSRF token in headers
+          'X-CSRFToken': csrfToken
         }
       });
       return response.data;
@@ -32,6 +40,7 @@ const apiService = {
       return null;
     }
   },
+
   sendData: async (data: any) => {
     try {
       const response = await axios.post(BASE_URL + 'send', data);
@@ -41,15 +50,7 @@ const apiService = {
       return null;
     }
   },
-  registerUser: async (username: string, password: string) => {
-    try {
-      const response = await axios.post(BASE_URL + 'register/', { username, password });
-      return response.data;
-    } catch (error) {
-      console.error('Error registering user:', error);
-      throw error; // Rethrow the error to handle it in the component
-    }
-  },
+
   sendProfileData: async (profileData: any) => {
     try {
       const response = await axios.post(BASE_URL + 'client-profiles/', profileData);
@@ -59,6 +60,7 @@ const apiService = {
       throw error;
     }
   },
+
   calculateFuelQuote: async (quoteData: {
     gallonsRequested: number;
     deliveryDate: Date | null;
@@ -72,18 +74,19 @@ const apiService = {
       throw error;
     }
   },
+
   fetchFuelQuoteHistory: async () => {
     try {
       const csrfToken = getCsrfToken(); // Get CSRF token
       const response = await axios.get(BASE_URL + 'fuelquote/history', {
         headers: {
-          'X-CSRFToken': csrfToken // Include CSRF token in headers
+          'X-CSRFToken': csrfToken
         }
       });
       return response.data;
     } catch (error) {
       console.error('Error fetching fuel quote history:', error);
-      throw error; // You can handle this error in your component
+      throw error;
     }
   }
 };

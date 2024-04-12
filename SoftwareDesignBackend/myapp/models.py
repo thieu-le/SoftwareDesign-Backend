@@ -7,8 +7,12 @@ from django.utils.translation import gettext as _
 
 
 class UserCredentials(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    password = models.CharField(max_length=128)  # Encrypted password will be stored here
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    password = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.user.username
+
 
 class State(models.Model):
     name = models.CharField(max_length=100, unique=True)

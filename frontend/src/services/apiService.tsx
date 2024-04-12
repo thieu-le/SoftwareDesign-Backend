@@ -23,8 +23,13 @@ const apiService = {
 
   registerUser: async (username: string, password: string, csrfToken: string) => {
     try {
-      const response = await axios.post(BASE_URL + 'register/', { username, password }, {
+      const formData = new FormData();
+      formData.append('username', username);
+      formData.append('password', password);
+  
+      const response = await axios.post(BASE_URL + 'register/', formData, {
         headers: {
+          'Content-Type': 'multipart/form-data',
           'X-CSRFToken': csrfToken
         }
       });

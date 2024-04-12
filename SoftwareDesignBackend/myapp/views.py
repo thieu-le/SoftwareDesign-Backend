@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required  # Import login_requir
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .forms import RegistrationForm
+from .models import UserCredentials
+
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -54,12 +56,34 @@ from django.http import JsonResponse
 def register_view(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
+        print("POST data:", request.POST)  # Debugging statement to print POST data
         if form.is_valid():
-            form.save()
-            return redirect('registration_success')  # Redirect to a success page
+            # Extract form data safely
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+
+            print("Extracted username:", username)  # Debugging statement to print extracted username
+
+            if username and password:
+                # Print the username for debugging purposes
+                print("Received username:", username)
+                
+                # Create User instance
+                user = User.objects.create_user(username=username, password=password)
+                
+                # Create UserCredentials instance and link it to the user
+                user_credentials = UserCredentials.objects.create(user=user, password=password)
+                
+                # Additional logic, such as redirecting to a success page or logging in the user
+                return HttpResponseRedirect('/success/')
+            else:
+                # Handle the case where form data is missing
+                # For example, you can render the form again with an error message
+                return render(request, 'register.html', {'form': form, 'error_message': 'Missing form data'})
     else:
         form = RegistrationForm()
     return render(request, 'register.html', {'form': form})
+
 
 
 def delete_client_profile(request, profile_uuid):  

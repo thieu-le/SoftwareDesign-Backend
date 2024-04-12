@@ -20,7 +20,7 @@ const Register: React.FC = () => {
     }
 
     try {
-      const registrationResult = await apiService.registerUser(username, password);
+      const registrationResult = await apiService.registerUser(username, password,);
 
       // Redirect or handle successful registration
     } catch (error) {

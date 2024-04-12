@@ -9,11 +9,13 @@ const apiService = {
       console.log('Password:', password);
       console.log('CSRF Token:', csrfToken);
 
-      const response = await axios.post(BASE_URL + 'register/', { username, password }, {
+      const response = await axios.post(BASE_URL + 'login/', { username, password }, {
+        method:'POST',
         headers: {
           'X-CSRFToken': csrfToken
         }
       });
+      console.log('response:', response)
       return response.data;
     } catch (error) {
       console.error('Error registering user:', error);

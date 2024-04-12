@@ -10,6 +10,9 @@ from .forms import RegistrationForm
 from .models import UserCredentials
 
 def login_view(request):
+    if request.method == 'GET':
+        data = {username : 'testing', password : "testing"}
+        return JsonResponse(data)
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -17,6 +20,7 @@ def login_view(request):
         if user is not None:
             login(request, user)
             return JsonResponse({'message': 'Login successful'}, status=200)
+            #add redirect line later: return HttpResponseRedirect('/success/')
         else:
             return JsonResponse({'message': 'Invalid credentials'}, status=400)
     else:
@@ -75,7 +79,8 @@ def register_view(request):
                 user_credentials = UserCredentials.objects.create(user=user, password=password)
                 
                 # Additional logic, such as redirecting to a success page or logging in the user
-                return HttpResponseRedirect('/success/')
+                #return HttpResponseRedirect('/success/')
+                return JsonResponse({'message': 'Successfully Regsitered'}, status=200)
             else:
                 # Handle the case where form data is missing
                 # For example, you can render the form again with an error message

@@ -12,7 +12,7 @@ const App: React.FC = () => {
     <div className="App">
       <Router>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<ProfileForm />} />
           <Route path="/fuelquoteform" element={<FuelQuoteForm clientProfile={{ deliveryAddress: '123 Main St' }} />} />

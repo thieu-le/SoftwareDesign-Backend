@@ -2,13 +2,8 @@ import axios from 'axios';
 
 const BASE_URL = 'http://127.0.0.1:8000/';
 
-function getCsrfToken() {
-  const csrfTokenElement = document.querySelector('[name=csrfmiddlewaretoken]') as HTMLInputElement;
-  return csrfTokenElement ? csrfTokenElement.value : '';
-}
-
 const apiService = {
-  registerUser: async (username: string, password: string, csrfToken: string) => {
+  login: async (username: string, password: string, csrfToken: string) => {
     try {
       console.log('Username:', username);
       console.log('Password:', password);
@@ -26,9 +21,23 @@ const apiService = {
     }
   },
 
+  registerUser: async (username: string, password: string, csrfToken: string) => {
+    try {
+      const response = await axios.post(BASE_URL + 'register/', { username, password }, {
+        headers: {
+          'X-CSRFToken': csrfToken
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error registering user:', error);
+      throw error;
+    }
+  },
+
   fetchData: async () => {
     try {
-      const csrfToken = getCsrfToken(); // Get CSRF token
+      const csrfToken = await apiService.getCsrfToken(); // Get CSRF token
       const response = await axios.get(BASE_URL + 'data', {
         headers: {
           'X-CSRFToken': csrfToken
@@ -61,11 +70,7 @@ const apiService = {
     }
   },
 
-  calculateFuelQuote: async (quoteData: {
-    gallonsRequested: number;
-    deliveryDate: Date | null;
-    clientAddress: string;
-  }) => {
+  calculateFuelQuote: async (quoteData: any) => {
     try {
       const response = await axios.post(BASE_URL + 'calculateFuelQuote', quoteData);
       return response.data;
@@ -77,7 +82,7 @@ const apiService = {
 
   fetchFuelQuoteHistory: async () => {
     try {
-      const csrfToken = getCsrfToken(); // Get CSRF token
+      const csrfToken = await apiService.getCsrfToken(); // Get CSRF token
       const response = await axios.get(BASE_URL + 'fuelquote/history', {
         headers: {
           'X-CSRFToken': csrfToken
@@ -86,6 +91,16 @@ const apiService = {
       return response.data;
     } catch (error) {
       console.error('Error fetching fuel quote history:', error);
+      throw error;
+    }
+  },
+
+  getCsrfToken: async () => {
+    try {
+      const response = await axios.get(BASE_URL + 'csrf/token');
+      return response.data.csrfToken;
+    } catch (error) {
+      console.error('Error fetching CSRF token:', error);
       throw error;
     }
   }

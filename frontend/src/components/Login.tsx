@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import apiService from '../services/apiService';
 import './styles.css';
 
@@ -8,6 +8,19 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [csrfToken, setCsrfToken] = useState('');
+
+  useEffect(() => {
+    const fetchCsrfToken = async () => {
+      try {
+        const token = await apiService.getCsrfToken();
+        setCsrfToken(token);
+      } catch (error) {
+        console.error('Error fetching CSRF token:', error);
+      }
+    };
+    fetchCsrfToken();
+  }, []);
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,7 +28,7 @@ const Login: React.FC = () => {
     setError(null);
 
     try {
-      await apiService.login(username, password);
+      await apiService.login(username, password, csrfToken);
       setLoading(false);
       // Redirect or perform any necessary action upon successful login
     } catch (error) {
@@ -41,13 +54,11 @@ const Login: React.FC = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder = 'Password'
+            placeholder='Password'
           />
         </div>
         {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit" disabled={loading} className="login-button">{loading ? 'Logging in...' : 'Login'} 
-        </button>
-        {/* Link to the Register page styled as a button */}
+        <button type="submit" disabled={loading} className="login-button">{loading ? 'Logging in...' : 'Login'}</button>
         <Link to="/register" className="register-button" style={{ marginLeft: '10px', marginTop: '10px' }}>Register</Link>
       </form>
     </div>

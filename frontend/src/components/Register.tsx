@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import apiService from '../services/apiService';
 import './styles.css';
 
@@ -7,6 +7,13 @@ const Register: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [csrfToken, setCsrfToken] = useState<string>('');
+
+  useEffect(() => {
+    // Fetch CSRF token when the component mounts
+    const token = getCsrfToken();
+    setCsrfToken(token);
+  }, []);
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -14,7 +21,7 @@ const Register: React.FC = () => {
     setError(null);
 
     try {
-      await apiService.registerUser(username, password);
+      await apiService.registerUser(username, password, csrfToken);
       setLoading(false);
       // Redirect or perform any necessary action upon successful registration
     } catch (error) {
@@ -28,20 +35,20 @@ const Register: React.FC = () => {
       <h2>Register</h2>
       <form onSubmit={handleFormSubmit} action="/register/" method="post">
         <div>
-          <label></label>
+          <label htmlFor="username">Username</label>
           <input
             type="text"
+            id="username"
             value={username}
-            placeholder='Username'
             onChange={(e) => setUsername(e.target.value)}
           />
         </div>
         <div>
-          <label></label>
+          <label htmlFor="password">Password</label>
           <input
             type="password"
+            id="password"
             value={password}
-            placeholder='Password'
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
@@ -55,3 +62,8 @@ const Register: React.FC = () => {
 };
 
 export default Register;
+
+function getCsrfToken() {
+  const csrfTokenElement = document.querySelector('[name=csrfmiddlewaretoken]') as HTMLInputElement;
+  return csrfTokenElement ? csrfTokenElement.value : '';
+}

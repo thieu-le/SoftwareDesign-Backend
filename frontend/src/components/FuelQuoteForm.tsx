@@ -9,19 +9,18 @@ interface FuelQuoteFormProps {
     };
 }
 
-const FuelQuoteForm: React.FC<FuelQuoteFormProps> =  ({clientProfile}) => {
-    const [gallonsRequested, setGallonsRequested] =  useState<number | ''>('');
+const FuelQuoteForm: React.FC<FuelQuoteFormProps> = ({ clientProfile }) => {
+    const [gallonsRequested, setGallonsRequested] = useState<number | ''>('');
     const [deliveryDate, setDeliveryDate] = useState<Date | null>(null);
     const [suggestedPrice, setSuggestedPrice] = useState<number | ''>('');
     const [totalAmountDue, setTotalAmountDue] = useState<number | ''>('');
-
+    const [deliveryAddress, setDeliveryAddress] = useState(clientProfile.deliveryAddress);
 
     const gallonChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         // Ensure that value is a number or an empty string
         setGallonsRequested(value === '' ? '' : Number(value));
     };
-    
 
     const dateChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -30,7 +29,19 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> =  ({clientProfile}) => {
         // Set the delivery date state
         setDeliveryDate(date);
     };
-    
+
+    const priceChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        // Ensure that value is a number or an empty string
+        setSuggestedPrice(value === '' ? '' : Number(value));
+    };
+
+    const handleDeliveryAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        // Update the delivery address state
+        setDeliveryAddress(value);
+    };
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -39,7 +50,7 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> =  ({clientProfile}) => {
             const { suggestedPrice, totalAmountDue } = await apiService.calculateFuelQuote({
                 gallonsRequested: gallonsRequested as number,
                 deliveryDate,
-                clientAddress: clientProfile.deliveryAddress
+                clientAddress: deliveryAddress // Use the state value here
             });
 
             setSuggestedPrice(suggestedPrice);
@@ -49,17 +60,16 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> =  ({clientProfile}) => {
         }
     };
 
-
-    return(
+    return (
         <div>
             <h2>Fuel Quote Form</h2>
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="gallonsRequested">Gallons Requested </label>
-                    <input 
+                    <input
                         type="number"
                         id="gallonsRequested"
-                        value = {gallonsRequested}
+                        value={gallonsRequested}
                         onChange={gallonChanges}
                         required
                     />
@@ -69,8 +79,9 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> =  ({clientProfile}) => {
                     <input
                         type="text"
                         id="deliveryAddress"
-                        value={clientProfile.deliveryAddress}
-                        readOnly
+                        value={deliveryAddress}
+                        onChange={handleDeliveryAddressChange}
+                        required
                     />
                 </div>
                 <div>
@@ -79,9 +90,9 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> =  ({clientProfile}) => {
                         type="date"
                         id="deliveryDate"
                         name="deliveryDate"
-                        value="{deliveryDate}"
+                        value={deliveryDate ? deliveryDate.toISOString().split('T')[0] : ''}
                         onChange={dateChanges}
-          
+                        required
                     />
                 </div>
                 <div>
@@ -90,8 +101,9 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> =  ({clientProfile}) => {
                         type="number"
                         id="suggestedPrice"
                         value={suggestedPrice}
-                        readOnly
-                    />    
+                        onChange={priceChanges}
+                        required
+                    />
                 </div>
                 <div>
                     <label htmlFor="totalAmountDue">Total Amount Due ($)</label>
@@ -102,7 +114,7 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> =  ({clientProfile}) => {
                         readOnly
                     />
                 </div>
-                <button type = "submit">Calculate</button>
+                <button type="submit">Calculate</button>
             </form>
         </div>
     );

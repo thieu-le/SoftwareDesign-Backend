@@ -30,6 +30,15 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> =  ({clientProfile}) => {
         // Set the delivery date state
         setDeliveryDate(date);
     };
+
+    const priceChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        // Ensure that value is a number or an empty string
+        setSuggestedPrice(value === '' ? '' : Number(value));
+    };
+
+    
+    
     
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -89,8 +98,9 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> =  ({clientProfile}) => {
                     <input
                         type="number"
                         id="suggestedPrice"
-                        value={suggestedPrice}
-                        readOnly
+                        value={suggestedPrice}  
+                        onChange={priceChanges}
+                        required
                     />    
                 </div>
                 <div>

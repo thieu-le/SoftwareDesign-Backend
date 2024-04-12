@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login
-from django.http import JsonResponse, HttpResponseNotAllowed
+from django.http import JsonResponse, HttpResponseNotAllowed,HttpResponseRedirect
 from .models import ClientProfile, FuelQuote, State  # Import FuelQuote model
 from .serializers import ClientProfileSerializer
 from django.contrib.auth.decorators import login_required  # Import login_required decorator

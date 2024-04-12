@@ -6,6 +6,7 @@ from .serializers import ClientProfileSerializer
 from django.contrib.auth.decorators import login_required  # Import login_required decorator
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from .forms import RegistrationForm
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -47,18 +48,19 @@ def update_client_profile(request, profile_uuid):
         return JsonResponse(serializer.errors, status=400)
 
     return JsonResponse({'error': 'Only PUT method is allowed'}, status=405)
+from django.contrib.auth.forms import UserCreationForm
+from django.http import JsonResponse
+
 def register_view(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = RegistrationForm(request.POST)
         if form.is_valid():
             form.save()
-            return JsonResponse({'message': 'Registration successful'}, status=201)
-        else:
-            errors = form.errors.as_json()
-            return JsonResponse({'errors': errors}, status=400)
+            return redirect('registration_success')  # Redirect to a success page
     else:
-        form = UserCreationForm()
+        form = RegistrationForm()
     return render(request, 'register.html', {'form': form})
+
 
 def delete_client_profile(request, profile_uuid):  
     profile = get_object_or_404(ClientProfile, pk=profile_uuid)

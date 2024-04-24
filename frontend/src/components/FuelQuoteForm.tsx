@@ -15,6 +15,7 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> = ({ clientProfile }) => {
     const [suggestedPrice, setSuggestedPrice] = useState<number | ''>('');
     const [totalAmountDue, setTotalAmountDue] = useState<number | ''>('');
     const [deliveryAddress, setDeliveryAddress] = useState(clientProfile.deliveryAddress);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const gallonChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -52,9 +53,9 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> = ({ clientProfile }) => {
         setSuggestedPrice(value === '' ? '' : Number(value));
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
+    const handleGetQuote = async () => {
+        // Disable the Get Quote button
+        setLoading(true);
         try {
             // Call the backend API to calculate suggested price and total amount due
             const { suggestedPrice, totalAmountDue } = await apiService.calculateFuelQuote({
@@ -67,7 +68,16 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> = ({ clientProfile }) => {
             setTotalAmountDue(totalAmountDue);
         } catch (error) {
             console.error('Error calculating fuel quote:', error);
+        } finally {
+            // Re-enable the Get Quote button
+            setLoading(false);
         }
+    };
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        // Submit the form data
     };
 
     return (
@@ -111,9 +121,9 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> = ({ clientProfile }) => {
                     <input
                         type="number"
                         id="suggestedPrice"
-                        value={suggestedPrice}
+                        value={suggestedPrice === '' ? '' : suggestedPrice.toFixed(2)} // Display calculated value with 2 decimal places
                         onChange={priceChanges}
-                        required
+                        readOnly
                     />
                 </div>
                 <div>
@@ -121,11 +131,14 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> = ({ clientProfile }) => {
                     <input
                         type="number"
                         id="totalAmountDue"
-                        value={totalAmountDue}
+                        value={totalAmountDue === '' ? '' : totalAmountDue.toFixed(2)} // Display calculated value with 2 decimal places
                         readOnly
                     />
                 </div>
-                <button type="submit">Calculate</button>
+                <button type="button" onClick={handleGetQuote} disabled={!gallonsRequested || !deliveryAddress || !deliveryDate || loading}>
+                    {loading ? 'Loading...' : 'Get Quote'}
+                </button>
+                <button type="submit" disabled={!suggestedPrice || !totalAmountDue}>Submit Quote</button>
             </form>
         </div>
     );

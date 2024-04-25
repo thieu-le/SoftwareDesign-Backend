@@ -8,6 +8,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .forms import RegistrationForm
 from .models import UserCredentials
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_protect
+from django.middleware.csrf import get_token
 
 def login_view(request):
     if request.method == 'GET':
@@ -29,9 +32,10 @@ def login_view(request):
 def index(request):
     return HttpResponse("Hello, world. This is the index page.")
 
+@csrf_protect
 def create_client_profile(request):
     if request.method == 'POST':
-        serializer = ClientProfileSerializer(data=request.data)
+        serializer = ClientProfileSerializer(data=request.POST)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data, status=201)
@@ -155,3 +159,9 @@ def fuel_quote_form(request):
 def quote_history(request):
     client_quotes = FuelQuote.objects.filter(client=request.user.clientprofile)
     return render(request, 'quote_history.html', {'client_quotes': client_quotes})
+
+def get_csrf_token(request):
+    # Get the CSRF token
+    csrf_token = get_token(request)
+    # Return the CSRF token in a JSON response
+    return JsonResponse({'csrfToken': csrf_token})

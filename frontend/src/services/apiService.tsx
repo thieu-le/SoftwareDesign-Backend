@@ -68,7 +68,12 @@ const apiService = {
 
   sendProfileData: async (profileData: any) => {
     try {
-      const response = await axios.post(BASE_URL + 'client-profiles/', profileData);
+      const csrfToken = await apiService.getCsrfToken(); // Get CSRF token
+      const response = await axios.post(BASE_URL + 'profile/', profileData, {
+        headers: {
+          'X-CSRFToken': csrfToken
+        }
+      });
       return response.data;
     } catch (error) {
       console.error('Error sending profile data:', error);

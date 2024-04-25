@@ -108,7 +108,7 @@ const apiService = {
 
   getCsrfToken: async () => {
     try {
-      const response = await axios.get(BASE_URL + 'csrf/token');
+      const response = await axios.get(BASE_URL + 'csrf/token/');
       return response.data.csrfToken;
     } catch (error) {
       console.error('Error fetching CSRF token:', error);

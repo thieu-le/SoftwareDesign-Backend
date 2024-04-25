@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext as _
+from django.core.management.base import BaseCommand
 
 # Your models go here
 
@@ -15,19 +16,12 @@ class UserCredentials(models.Model):
 
 
 class State(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    abbreviation = models.CharField(max_length=2, unique=True)
-
-    class Meta:
-        verbose_name = _("State")
-        verbose_name_plural = _("States")
+    name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
-
 class ClientProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    address = models.CharField(max_length=255, default="N/A")
     full_name = models.CharField(max_length=255, default="")
     address1 = models.CharField(max_length=255, default="")
     address2 = models.CharField(max_length=255, blank=True, null=True)

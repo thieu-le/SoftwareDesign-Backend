@@ -5,26 +5,39 @@ const Register: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
 
     if (!username || !password || !confirmPassword) {
-      console.error('Username, password, and confirmation are required.');
+      setError('Username, password, and confirmation are required.');
+      setLoading(false);
       return;
     }
 
     if (password !== confirmPassword) {
-      console.error('Password and confirmation do not match.');
+      setError('Password and confirmation do not match.');
+      setLoading(false);
       return;
     }
 
     try {
       const registrationResult = await apiService.registerUser(username, password);
-      // Redirect or handle successful registration
+      console.log('Registration result:', registrationResult); // Log registration result
+      setLoading(false);
+      // Check if the response contains the 'message' key and display it
+      if (registrationResult && registrationResult.message) {
+        console.log(registrationResult.message); // Log the success message
+        // Redirect to login page after successful registration
+        window.location.href = '/login';
+      }
     } catch (error) {
-      console.error('Error registering user:', error);
-      // Handle error
+      setError('Error registering user. Please try again.');
+      setLoading(false);
     }
   };
 
@@ -59,7 +72,8 @@ const Register: React.FC = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </div>
-        <button type="submit">Register</button>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        <button type="submit" disabled={loading}>{loading ? 'Registering...' : 'Register'}</button>
       </form>
     </div>
   );

@@ -38,17 +38,42 @@ def login_view(request):
 def index(request):
     return HttpResponse("Hello, world. This is the index page.")
 
-@csrf_protect
 def create_client_profile(request):
+    print(request.POST)
     if request.method == 'POST':
+        user = request.user
+        print(user)
         serializer = ClientProfileSerializer(data=request.POST)
+        if not serializer.is_valid():
+            print("Serializer is not valid")
+            print(serializer.errors)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
 
     return JsonResponse({'error': 'Only POST method is allowed'}, status=405)
+# @login_required
+# def create_client_profile(request):
+#     print(request.POST)
+#     if request.method == 'POST':
+#         user = request.user
+#         profile_data = request.POST.copy()  # Create a mutable copy of the POST data
+        
+#         # Remove the 'user' field from the form data
+#         profile_data.pop('user', None)
+        
+#         # Add the user's primary key to the data
+#         profile_data['user'] = user.pk  
 
+#         serializer = ClientProfileSerializer(data=profile_data)
+        
+#         if serializer.is_valid():
+#             serializer.save()
+#             return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+#         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#     return JsonResponse({'error': 'Only POST method is allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 def get_client_profile(request, profile_uuid): 
     profile = get_object_or_404(ClientProfile, pk=profile_uuid)
     serializer = ClientProfileSerializer(profile)
@@ -89,31 +114,21 @@ from django.http import JsonResponse
 def register_view(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
-        print("POST data:", request.POST)  # Debugging statement to print POST data
         if form.is_valid():
             # Extract form data safely
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
 
-            print("Extracted username:", username)  # Debugging statement to print extracted username
-
             if username and password:
-                # Print the username for debugging purposes
-                print("Received username:", username)
-                
                 # Create User instance
                 user = User.objects.create_user(username=username, password=password)
-                
                 # Create UserCredentials instance and link it to the user
                 user_credentials = UserCredentials.objects.create(user=user, password=password)
-                
-                # Additional logic, such as redirecting to a success page or logging in the user
-                #return HttpResponseRedirect('/success/')
-                return redirect('login')
+                # Return a JSON response indicating successful registration
+                return JsonResponse({'message': 'Registration successful'}, status=200)
             else:
                 # Handle the case where form data is missing
-                # For example, you can render the form again with an error message
-                return render(request, 'register.html', {'form': form, 'error_message': 'Missing form data'})
+                return JsonResponse({'error': 'Missing form data'}, status=400)
     else:
         form = RegistrationForm()
     return render(request, 'register.html', {'form': form})

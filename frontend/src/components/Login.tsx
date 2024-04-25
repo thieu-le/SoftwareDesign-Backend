@@ -1,36 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import apiService from '../services/apiService';
-import './styles.css';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [csrfToken, setCsrfToken] = useState('');
-
-  useEffect(() => {
-    const fetchCsrfToken = async () => {
-      try {
-        const token = await apiService.getCsrfToken();
-        setCsrfToken(token);
-      } catch (error) {
-        console.error('Error fetching CSRF token:', error);
-      }
-    };
-    fetchCsrfToken();
-  }, []);
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
+  
     try {
-      await apiService.login(username, password, csrfToken);
+      const data = await apiService.login(username, password);
       setLoading(false);
-      // Redirect or perform any necessary action upon successful login
+      // Check if the response contains the 'message' key and display it
+      if (data && data.message) {
+        console.log(data.message); // Log the success message
+        // Redirect or perform any other necessary action upon successful login
+      }
     } catch (error) {
       setError('Invalid credentials. Please try again.');
       setLoading(false);
@@ -58,8 +48,8 @@ const Login: React.FC = () => {
           />
         </div>
         {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit" disabled={loading} className="login-button">{loading ? 'Logging in...' : 'Login'}</button>
-        <Link to="/register" className="register-button" style={{ marginLeft: '10px', marginTop: '10px' }}>Register</Link>
+        <button type="submit" disabled={loading}>{loading ? 'Logging in...' : 'Login'}</button>
+        <Link to="/register">Register</Link>
       </form>
     </div>
   );

@@ -6,34 +6,37 @@ from .serializers import ClientProfileSerializer
 from django.contrib.auth.decorators import login_required  # Import login_required decorator
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .forms import RegistrationForm
+from .forms import RegistrationForm, LoginForm
 from .models import UserCredentials
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.csrf import csrf_protect
 from django.middleware.csrf import get_token
+from django.urls import reverse
 
+def csrf_token_view(request):
+    # Get the CSRF token
+    csrf_token = get_token(request)
+    return JsonResponse({'csrfToken': csrf_token})
 def login_view(request):
-    if request.method == 'GET':
-        data = {username : 'testing', password : "testing"}
-        return JsonResponse(data)
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return JsonResponse({'message': 'Login successful'}, status=200)
-            #add redirect line later: return HttpResponseRedirect('/success/')
-        else:
-            return JsonResponse({'message': 'Invalid credentials'}, status=400)
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return JsonResponse({'message': 'Login successful'}, status=200)
+            else:
+                return JsonResponse({'message': 'Invalid credentials'}, status=400)
     else:
-        return HttpResponseNotAllowed(['POST'])
+        form = LoginForm()
+    return render(request, 'login.html', {'form': form})
 
 def index(request):
     return HttpResponse("Hello, world. This is the index page.")
 
-#changed from csrf_protect to csrf_exempt for testing purposes
-@csrf_exempt
+@csrf_protect
 def create_client_profile(request):
     if request.method == 'POST':
         serializer = ClientProfileSerializer(data=request.POST)
@@ -104,7 +107,7 @@ def register_view(request):
                 
                 # Additional logic, such as redirecting to a success page or logging in the user
                 #return HttpResponseRedirect('/success/')
-                return JsonResponse({'message': 'Successfully Regsitered'}, status=200)
+                return redirect('login')
             else:
                 # Handle the case where form data is missing
                 # For example, you can render the form again with an error message
@@ -161,7 +164,6 @@ def quote_history(request):
     client_quotes = FuelQuote.objects.filter(client=request.user.clientprofile)
     return render(request, 'quote_history.html', {'client_quotes': client_quotes})
 
-@csrf_exempt
 def get_csrf_token(request):
     # Get the CSRF token
     csrf_token = get_token(request)

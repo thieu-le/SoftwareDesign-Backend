@@ -21,7 +21,6 @@ const Register: React.FC = () => {
 
     try {
       const registrationResult = await apiService.registerUser(username, password);
-
       // Redirect or handle successful registration
     } catch (error) {
       console.error('Error registering user:', error);

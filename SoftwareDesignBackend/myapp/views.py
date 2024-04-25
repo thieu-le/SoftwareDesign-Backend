@@ -32,7 +32,8 @@ def login_view(request):
 def index(request):
     return HttpResponse("Hello, world. This is the index page.")
 
-@csrf_protect
+#changed from csrf_protect to csrf_exempt for testing purposes
+@csrf_exempt
 def create_client_profile(request):
     if request.method == 'POST':
         serializer = ClientProfileSerializer(data=request.POST)

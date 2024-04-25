@@ -162,7 +162,9 @@ def fuel_quote_form(request):
 @login_required
 def quote_history(request):
     client_quotes = FuelQuote.objects.filter(client=request.user.clientprofile)
-    return render(request, 'quote_history.html', {'client_quotes': client_quotes})
+    print(request)
+    # return render(request, 'quote_history.html', {'client_quotes': client_quotes})
+    return JsonResponse(request)
 
 def get_csrf_token(request):
     # Get the CSRF token

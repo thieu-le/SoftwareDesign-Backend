@@ -160,6 +160,7 @@ def quote_history(request):
     client_quotes = FuelQuote.objects.filter(client=request.user.clientprofile)
     return render(request, 'quote_history.html', {'client_quotes': client_quotes})
 
+@csrf_exempt
 def get_csrf_token(request):
     # Get the CSRF token
     csrf_token = get_token(request)

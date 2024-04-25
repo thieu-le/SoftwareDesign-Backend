@@ -12,6 +12,6 @@ urlpatterns = [
     path('client-profiles/<uuid:profile_uuid>/delete/', delete_client_profile, name='delete_client_profile'),
     path('csrf/token/', csrf_token_view, name='csrf_token'),
     # Add fuel quote URLs
-    path('fuel-quote/', fuel_quote_form, name='fuel_quote_form'),
+    path('calculateFuelQuote/', fuel_quote_form, name='calculate_fuel_quote'),
     path('quote-history/', quote_history, name='quote_history'),
 ]

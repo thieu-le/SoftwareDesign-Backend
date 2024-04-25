@@ -119,7 +119,6 @@ def register_view(request):
     return render(request, 'register.html', {'form': form})
 
 
-
 def delete_client_profile(request, profile_uuid):  
     profile = get_object_or_404(ClientProfile, pk=profile_uuid)
     profile.delete()
@@ -127,34 +126,29 @@ def delete_client_profile(request, profile_uuid):
 
 # Define the fuel_quote_form function
 def fuel_quote_form(request):
-    try:
-        # Example of how to get data from request.POST
-        profile_uuid = request.POST.get('profile_uuid')
-        profile = get_object_or_404(ClientProfile, pk = profile_uuid)
-        serializer = ClientProfileSerializer(profile)
-
-        user_profile = request.user.clientprofile
-        gallons_requested = float(request.POST['gallons_requested'])
-        delivery_date = request.POST['delivery_date']
-
-        quote_data = calculate_fuel_quote_service(user_profile,gallons_requested, delivery_date)
-
-        gallons_requested = float(request.POST['gallons_requested'])
-        delivery_date = request.POST['delivery_date']
-        # Call the service function to calculate the fuel quote
-        quote_data = calculate_fuel_quote_service(gallons_requested, delivery_date)
-
-        response_data = {
-            'client_profile': serializer.data,
-            'quote_data': quote_data
-        }
-
-
-        return JsonResponse(response_data)
-    
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=400)
-    
+    if request.method == 'POST':
+        try:
+            # Get data from request
+            profile_uuid = request.POST.get('profile_uuid')
+            profile = get_object_or_404(ClientProfile, pk=profile_uuid)
+            gallons_requested = float(request.POST['gallons_requested'])
+            delivery_date = request.POST['delivery_date']
+            
+            # Call service function to calculate fuel quote
+            quote_data = calculate_fuel_quote_service(profile, gallons_requested, delivery_date)
+            
+            # Prepare response data
+            response_data = {
+                'success': True,
+                'quote_data': quote_data
+            }
+            return JsonResponse(response_data)
+        except Exception as e:
+            # Handle exceptions
+            return JsonResponse({'success': False, 'error': str(e)}, status=400)
+    else:
+        # Method not allowed
+        return JsonResponse({'success': False, 'error': 'Only POST method is allowed'}, status=405)
 
 
 

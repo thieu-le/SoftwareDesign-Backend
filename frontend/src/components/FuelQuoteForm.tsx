@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
-import apiService from '../services/apiService';
 import './styles.css';
 
 interface FuelQuoteFormProps {
@@ -47,31 +46,31 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> = ({ clientProfile }) => {
         setDeliveryAddress(value);
     };
 
-    const priceChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        // Ensure that value is a number or an empty string
-        setSuggestedPrice(value === '' ? '' : Number(value));
-    };
-
-    const handleGetQuote = async () => {
-        // Disable the Get Quote button
+    const handleGetQuote = () => {
         setLoading(true);
-        try {
-            // Call the backend API to calculate suggested price and total amount due
-            const { suggestedPrice, totalAmountDue } = await apiService.calculateFuelQuote({
-                gallonsRequested: gallonsRequested as number,
-                deliveryDate: new Date(deliveryDate), // Convert delivery date to a Date object
-                clientAddress: deliveryAddress
-            });
 
-            setSuggestedPrice(suggestedPrice);
-            setTotalAmountDue(totalAmountDue);
-        } catch (error) {
-            console.error('Error calculating fuel quote:', error);
-        } finally {
-            // Re-enable the Get Quote button
-            setLoading(false);
-        }
+        // Convert gallonsRequested to number
+        const gallonsRequestedNumber = gallonsRequested === '' ? 0 : Number(gallonsRequested);
+
+        // Calculate Margin based on factors
+        const locationFactor = deliveryAddress.toLowerCase().includes('texas') ? 0.02 : 0.04;
+        const rateHistoryFactor = 0.01; // Assuming client always has history for simplicity
+        const gallonsRequestedFactor = gallonsRequestedNumber > 1000 ? 0.02 : 0.03;
+        const companyProfitFactor = 0.10;
+        
+        const currentPricePerGallon = 1.50;
+        const margin = currentPricePerGallon * (locationFactor - rateHistoryFactor + gallonsRequestedFactor + companyProfitFactor);
+        const suggestedPricePerGallon = currentPricePerGallon + margin;
+
+        // Calculate Total Amount Due
+        const totalAmount = gallonsRequestedNumber * suggestedPricePerGallon;
+
+        // Set state with calculated values
+        setSuggestedPrice(suggestedPricePerGallon);
+        setTotalAmountDue(Number(totalAmount.toFixed(2)));
+
+
+        setLoading(false);
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -122,8 +121,7 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> = ({ clientProfile }) => {
                         type="number"
                         id="suggestedPrice"
                         value={suggestedPrice === '' ? '' : suggestedPrice.toFixed(2)} // Display calculated value with 2 decimal places
-                        onChange={priceChanges}
-                        
+                        readOnly
                     />
                 </div>
                 <div>
@@ -131,7 +129,7 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> = ({ clientProfile }) => {
                     <input
                         type="number"
                         id="totalAmountDue"
-                        value={totalAmountDue === '' ? '' : totalAmountDue.toFixed(2)} // Display calculated value with 2 decimal places
+                        value={totalAmountDue === '' ? '' : totalAmountDue} // Total amount is already formatted to 2 decimal places
                         readOnly
                     />
                 </div>

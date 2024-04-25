@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import DatePicker from 'react-datepicker';
 import apiService from '../services/apiService';
 import './styles.css';
 
 interface FuelQuote {
   gallonsRequested: number;
   deliveryAddress: string;
-  deliveryDate: string; // Assuming this is a string date
+  deliveryDate: string;
   suggestedPrice: number;
   totalAmountDue: number;
 }
@@ -22,7 +21,7 @@ const FuelQuoteHistory = () => {
   const fetchFuelQuoteHistory = async () => {
     try {
       const history = await apiService.fetchFuelQuoteHistory();
-      setQuotes(history);
+      setQuotes(Array.isArray(history) ? history : []); // Ensure history is an array
     } catch (error) {
       console.error('Error fetching fuel quote history:', error);
     }
@@ -31,7 +30,7 @@ const FuelQuoteHistory = () => {
   return (
     <div>
       <h2>Fuel Quote History</h2>
-      {quotes.length === 0 ? (
+      {Array.isArray(quotes) && quotes.length === 0 ? (
         <p>No data available</p>
       ) : (
         quotes.map((quote, index) => (

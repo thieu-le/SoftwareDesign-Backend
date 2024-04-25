@@ -94,7 +94,7 @@ const apiService = {
   fetchFuelQuoteHistory: async () => {
     try {
       const csrfToken = await apiService.getCsrfToken(); // Get CSRF token
-      const response = await axios.get(BASE_URL + 'fuelquote/history', {
+      const response = await axios.get(BASE_URL + 'quote-history/', {
         headers: {
           'X-CSRFToken': csrfToken
         }

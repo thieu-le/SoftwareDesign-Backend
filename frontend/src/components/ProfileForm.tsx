@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import apiService from '../services/apiService'; // Import the apiService
 import './styles.css';
 
@@ -15,7 +15,18 @@ const ProfileForm: React.FC = () => {
   const [state, setState] = useState('');
   const [zipcode, setZipcode] = useState('');
   const [csrfToken, setCsrfToken] = useState('');
-
+  useEffect(() => {
+    const fetchCsrfToken = async () => {
+      try {
+        const token = await apiService.getCsrfToken();
+        setCsrfToken(token);
+      } catch (error) {
+        console.error('Error fetching CSRF token:', error);
+      }
+    };
+    fetchCsrfToken();
+  }, []);
+  
   const states: StateObject[] = [
     { name: 'Alabama', pk: 1 },
     { name: 'Alaska', pk: 2 },
@@ -68,12 +79,17 @@ const ProfileForm: React.FC = () => {
     { name: 'Wisconsin', pk: 49 },
     { name: 'Wyoming', pk: 50 }
   ];
-
+  const getUserIdFromUrl = (): string => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('user_id') || '';
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const userId = getUserIdFromUrl();
     try {
       // Map form data to match ClientProfileSerializer fields
       const profileData = {
+        user: userId,
         full_name: fullName,
         address1,
         address2,

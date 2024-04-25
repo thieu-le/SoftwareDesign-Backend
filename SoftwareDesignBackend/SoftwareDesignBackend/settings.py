@@ -53,6 +53,9 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Database-backed sessions
+SESSION_COOKIE_AGE = 3600  # Session expiry time in seconds (e.g., 1 hour)
+SESSION_COOKIE_NAME = 'my_session_cookie'  # Custom session cookie name
 
 ROOT_URLCONF = 'SoftwareDesignBackend.urls'
 

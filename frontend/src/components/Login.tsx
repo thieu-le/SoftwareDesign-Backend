@@ -19,7 +19,8 @@ const Login: React.FC = () => {
       // Check if the response contains the 'message' key and display it
       if (data && data.message) {
         console.log(data.message); // Log the success message
-        // Redirect or perform any other necessary action upon successful login
+        // Redirect to /profile upon successful login
+        window.location.href = '/profile';
       }
     } catch (error) {
       setError('Invalid credentials. Please try again.');

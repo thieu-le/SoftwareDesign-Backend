@@ -5,20 +5,20 @@ const BASE_URL = 'http://127.0.0.1:8000/';
 const apiService = {
   login: async (username: string, password: string, csrfToken: string) => {
     try {
-      console.log('Username:', username);
-      console.log('Password:', password);
-      console.log('CSRF Token:', csrfToken);
-
-      const response = await axios.post(BASE_URL + 'login/', { username, password }, {
-        method:'POST',
+      const formData = new FormData();
+      formData.append('username', username);
+      formData.append('password', password);
+  
+      const response = await axios.post(BASE_URL + 'login/', formData, {
         headers: {
-          'X-CSRFToken': csrfToken
+          'X-CSRFToken': csrfToken,
+          'Content-Type': 'application/x-www-form-urlencoded', // Ensure correct content type
         }
       });
-      console.log('response:', response)
+      
       return response.data;
     } catch (error) {
-      console.error('Error registering user:', error);
+      console.error('Error logging in user:', error);
       throw error;
     }
   },
@@ -108,7 +108,7 @@ const apiService = {
 
   getCsrfToken: async () => {
     try {
-      const response = await axios.get(BASE_URL + 'csrf/token');
+      const response = await axios.get(BASE_URL + 'csrf/token/');
       return response.data.csrfToken;
     } catch (error) {
       console.error('Error fetching CSRF token:', error);

@@ -17,6 +17,7 @@ class UserCredentials(models.Model):
 
 class State(models.Model):
     name = models.CharField(max_length=100)
+    abbreviation = models.CharField(max_length=10, null=True)  # Allow NULL values for abbreviation
 
     def __str__(self):
         return self.name

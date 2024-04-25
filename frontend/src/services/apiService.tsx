@@ -66,12 +66,23 @@ const apiService = {
     }
   },
 
-  sendProfileData: async (profileData: any) => {
+  sendProfileData: async (profileData: any, csrfToken: string) => {
     try {
-      const csrfToken = await apiService.getCsrfToken(); // Get CSRF token
-      const response = await axios.post(BASE_URL + 'profile/', profileData, {
+      // Create a new FormData object
+      const formData = new FormData();
+      
+      // Append each profile data field to the FormData object
+      Object.keys(profileData).forEach(key => {
+        formData.append(key, profileData[key]);
+      });
+  
+      // Append the CSRF token to the FormData object
+      formData.append('csrfmiddlewaretoken', csrfToken);
+  
+      // Send the FormData object in the POST request
+      const response = await axios.post(BASE_URL + 'profile/', formData, {
         headers: {
-          'X-CSRFToken': csrfToken
+          'Content-Type': 'multipart/form-data' // Set the content type to multipart/form-data
         }
       });
       return response.data;
@@ -80,6 +91,7 @@ const apiService = {
       throw error;
     }
   },
+  
 
   calculateFuelQuote: async (quoteData: any) => {
     try {

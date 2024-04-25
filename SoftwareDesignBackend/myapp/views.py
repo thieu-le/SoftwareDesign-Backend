@@ -44,6 +44,25 @@ def get_client_profile(request, profile_uuid):
     serializer = ClientProfileSerializer(profile)
     return JsonResponse(serializer.data)
 
+def fuel_quote_history(request):
+    # Retrieve fuel quote history from the database
+    quotes = FuelQuote.objects.all()  # Assuming FuelQuote is your model for fuel quotes
+
+    # Serialize the fuel quote data
+    fuel_quote_data = [
+        {
+            'gallonsRequested': quote.gallons_requested,
+            'deliveryAddress': quote.delivery_address,
+            'deliveryDate': quote.delivery_date,
+            'suggestedPrice': quote.suggested_price_per_gallon,
+            'totalAmountDue': quote.total_amount_due
+        }
+        for quote in quotes
+    ]
+
+    # Return the fuel quote history data as JSON response
+    return JsonResponse(fuel_quote_data, safe=False)
+
 def update_client_profile(request, profile_uuid):  
     profile = get_object_or_404(ClientProfile, pk=profile_uuid)
     if request.method == 'PUT':

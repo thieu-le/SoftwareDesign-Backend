@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import login_view, index, create_client_profile, get_client_profile, update_client_profile, delete_client_profile, register_view
 from .views import fuel_quote_form, quote_history  # Import fuel quote views
+from .import views
 
 urlpatterns = [
     path('', index, name='index'),
@@ -13,5 +14,6 @@ urlpatterns = [
     
     # Add fuel quote URLs
     path('fuel-quote/', fuel_quote_form, name='fuel_quote_form'),
+    path('fuelquotehistory/', views.fuel_quote_history, name='fuel_quote_history'),
     path('quote-history/', quote_history, name='quote_history'),
 ]

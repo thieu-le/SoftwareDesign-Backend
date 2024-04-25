@@ -123,7 +123,7 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> = ({ clientProfile }) => {
                         id="suggestedPrice"
                         value={suggestedPrice === '' ? '' : suggestedPrice.toFixed(2)} // Display calculated value with 2 decimal places
                         onChange={priceChanges}
-                        readOnly
+                        
                     />
                 </div>
                 <div>

@@ -36,17 +36,40 @@ def login_view(request):
 def index(request):
     return HttpResponse("Hello, world. This is the index page.")
 
-@csrf_protect
+# def create_client_profile(request):
+#     print(request.POST)
+#     if request.method == 'POST':
+#         user = request.user
+#         print(user)
+#         serializer = ClientProfileSerializer(data=request.POST)
+#         if not serializer.is_valid():
+#             print("Serializer is not valid")
+#             print(serializer.errors)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return JsonResponse(serializer.data, status=201)
+#         return JsonResponse(serializer.errors, status=400)
+
+#     return JsonResponse({'error': 'Only POST method is allowed'}, status=405) prev
+@login_required
 def create_client_profile(request):
     if request.method == 'POST':
-        serializer = ClientProfileSerializer(data=request.POST)
+        user = request.user
+        profile_data = request.POST.copy()  # Create a mutable copy of the POST data
+        
+        # Remove the 'user' field from the form data
+        profile_data.pop('user', None)
+        
+        # Add the user's primary key to the data
+        profile_data['user'] = user.pk  
+
+        serializer = ClientProfileSerializer(data=profile_data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    return JsonResponse({'error': 'Only POST method is allowed'}, status=405)
-
+    return JsonResponse({'error': 'Only POST method is allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 def get_client_profile(request, profile_uuid): 
     profile = get_object_or_404(ClientProfile, pk=profile_uuid)
     serializer = ClientProfileSerializer(profile)

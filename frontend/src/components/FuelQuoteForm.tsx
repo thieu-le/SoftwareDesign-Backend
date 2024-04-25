@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
-import apiService from '../services/apiService';
 import './styles.css';
 
 interface FuelQuoteFormProps {
@@ -9,6 +8,24 @@ interface FuelQuoteFormProps {
     };
 }
 
+// Pricing logic integrated into frontend
+const calculateFuelQuote = (userState: string, hasRateHistory: boolean, gallonsRequested: number): { suggestedPrice: number, totalAmountDue: number } => {
+    const currentPricePerGallon = 1.50;
+    const locationFactor = userState === 'Texas' ? 0.02 : 0.04;
+    const rateHistoryFactor = hasRateHistory ? 0.01 : 0;
+    const gallonsRequestedFactor = gallonsRequested > 1000 ? 0.02 : 0.03;
+    const companyProfitFactor = 0.10;
+
+    const margin = currentPricePerGallon * (locationFactor - rateHistoryFactor + gallonsRequestedFactor + companyProfitFactor);
+    const suggestedPrice = currentPricePerGallon + margin;
+    const totalAmountDue = gallonsRequested * suggestedPrice;
+
+    return {
+        suggestedPrice: suggestedPrice,
+        totalAmountDue: totalAmountDue
+    };
+};
+
 const FuelQuoteForm: React.FC<FuelQuoteFormProps> = ({ clientProfile }) => {
     const [gallonsRequested, setGallonsRequested] = useState<number | ''>('');
     const [deliveryDate, setDeliveryDate] = useState<string>('');
@@ -16,67 +33,48 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> = ({ clientProfile }) => {
     const [totalAmountDue, setTotalAmountDue] = useState<number | ''>('');
     const [deliveryAddress, setDeliveryAddress] = useState(clientProfile.deliveryAddress);
     const [loading, setLoading] = useState<boolean>(false);
+    const [rateHistory, setRateHistory] = useState<boolean>(false);
 
     const gallonChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
-        // Ensure that value is a number or an empty string
         setGallonsRequested(value === '' ? '' : Number(value));
     };
 
     const handleDeliveryDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let value = e.target.value;
-        // Ensure that only digits and slashes are entered
         value = value.replace(/[^\d/]/g, '');
-    
-        // Ensure that the length does not exceed 10 characters (MM/DD/YYYY format)
         if (value.length > 10) {
             value = value.slice(0, 10);
         } else if (value.length > 2 && value[2] !== '/') {
-            // Add slash after month if not present
             value = value.slice(0, 2) + '/' + value.slice(2);
         } else if (value.length > 5 && value[5] !== '/') {
-            // Add slash after day if not present
             value = value.slice(0, 5) + '/' + value.slice(5);
         }
-    
         setDeliveryDate(value);
     };
+
     const handleDeliveryAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
-        // Update the delivery address state
         setDeliveryAddress(value);
     };
 
-    const priceChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        // Ensure that value is a number or an empty string
-        setSuggestedPrice(value === '' ? '' : Number(value));
-    };
-
-    const handleGetQuote = async () => {
-        // Disable the Get Quote button
+    const handleGetQuote = () => {
         setLoading(true);
         try {
-            // Call the backend API to calculate suggested price and total amount due
-            const { suggestedPrice, totalAmountDue } = await apiService.calculateFuelQuote({
-                gallonsRequested: gallonsRequested as number,
-                deliveryDate: new Date(deliveryDate), // Convert delivery date to a Date object
-                clientAddress: deliveryAddress
-            });
+            // Call the local pricing function
+            const { suggestedPrice, totalAmountDue } = calculateFuelQuote(deliveryAddress, rateHistory, gallonsRequested as number);
 
             setSuggestedPrice(suggestedPrice);
             setTotalAmountDue(totalAmountDue);
         } catch (error) {
             console.error('Error calculating fuel quote:', error);
         } finally {
-            // Re-enable the Get Quote button
             setLoading(false);
         }
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
         // Submit the form data
     };
 
@@ -121,9 +119,8 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> = ({ clientProfile }) => {
                     <input
                         type="number"
                         id="suggestedPrice"
-                        value={suggestedPrice === '' ? '' : suggestedPrice.toFixed(2)} // Display calculated value with 2 decimal places
-                        onChange={priceChanges}
-                        
+                        value={suggestedPrice === '' ? '' : suggestedPrice.toFixed(2)}
+                        readOnly
                     />
                 </div>
                 <div>
@@ -131,7 +128,7 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> = ({ clientProfile }) => {
                     <input
                         type="number"
                         id="totalAmountDue"
-                        value={totalAmountDue === '' ? '' : totalAmountDue.toFixed(2)} // Display calculated value with 2 decimal places
+                        value={totalAmountDue === '' ? '' : totalAmountDue.toFixed(2)}
                         readOnly
                     />
                 </div>
@@ -143,4 +140,5 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> = ({ clientProfile }) => {
         </div>
     );
 };
+
 export default FuelQuoteForm;

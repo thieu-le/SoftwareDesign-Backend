@@ -7,6 +7,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loggedIn, setLoggedIn] = useState(false); // Track login status
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,7 +20,7 @@ const Login: React.FC = () => {
       // Check if the response contains the 'message' key and display it
       if (data && data.message) {
         console.log(data.message); // Log the success message
-        // Redirect or perform any other necessary action upon successful login
+        setLoggedIn(true); // Update login status
       }
     } catch (error) {
       setError('Invalid credentials. Please try again.');
@@ -50,6 +51,7 @@ const Login: React.FC = () => {
         {error && <p style={{ color: 'red' }}>{error}</p>}
         <button type="submit" disabled={loading}>{loading ? 'Logging in...' : 'Login'}</button>
         <Link to="/register">Register</Link>
+        {loggedIn && <Link to="/profile">Go to Profile</Link>}
       </form>
     </div>
   );

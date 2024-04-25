@@ -8,7 +8,7 @@ const apiService = {
       const formData = new FormData();
       formData.append('username', username);
       formData.append('password', password);
-  
+      const csrfToken = await apiService.getCsrfToken();
       const response = await axios.post(BASE_URL + 'login/', formData, {
         headers: {
           'X-CSRFToken': csrfToken,
@@ -22,12 +22,12 @@ const apiService = {
       throw error;
     }
   },
-
   registerUser: async (username: string, password: string, csrfToken: string) => {
     try {
       const formData = new FormData();
       formData.append('username', username);
       formData.append('password', password);
+      const csrfToken = await apiService.getCsrfToken();
       const response = await axios.post(BASE_URL + 'register/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -67,30 +67,60 @@ const apiService = {
   },
 
   sendProfileData: async (profileData: any, csrfToken: string) => {
-    try {
-      // Create a new FormData object
-      const formData = new FormData();
-      
-      // Append each profile data field to the FormData object
-      Object.keys(profileData).forEach(key => {
-        formData.append(key, profileData[key]);
-      });
-  
-      // Append the CSRF token to the FormData object
-      formData.append('csrfmiddlewaretoken', csrfToken);
-  
-      // Send the FormData object in the POST request
-      const response = await axios.post(BASE_URL + 'profile/', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data' // Set the content type to multipart/form-data
-        }
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Error sending profile data:', error);
-      throw error;
-    }
-  },
+  try {
+    // Create a new FormData object
+    const formData = new FormData();
+    
+    // Append each profile data field to the FormData object
+    Object.keys(profileData).forEach(key => {
+      // Check if the key is 'state' and adjust it if necessary
+      const adjustedKey = key === 'state' ? 'state_id' : key;
+      formData.append(adjustedKey, profileData[key]);
+    });
+
+    // Append the CSRF token to the FormData object
+    formData.append('csrfmiddlewaretoken', csrfToken);
+
+    // Send the FormData object in the POST request
+    const response = await axios.post(BASE_URL + 'profile/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data' // Set the content type to multipart/form-data
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error sending profile data:', error);
+    throw error;
+  }
+},
+sendProfileData: async (profileData: any, csrfToken: string) => {
+  try {
+    // Create a new FormData object
+    const formData = new FormData();
+    
+    // Append each profile data field to the FormData object
+    Object.keys(profileData).forEach(key => {
+      // Check if the key is 'state' and adjust it if necessary
+      const adjustedKey = key === 'state' ? 'state_id' : key;
+      formData.append(adjustedKey, profileData[key]);
+    });
+
+    // Append the CSRF token to the FormData object
+    formData.append('csrfmiddlewaretoken', csrfToken);
+
+    // Send the FormData object in the POST request
+    const response = await axios.post(BASE_URL + 'profile/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data' // Set the content type to multipart/form-data
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error sending profile data:', error);
+    throw error;
+  }
+},
+
   
 
   calculateFuelQuote: async (quoteData: any) => {

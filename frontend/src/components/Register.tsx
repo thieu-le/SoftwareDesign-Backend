@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import apiService from '../services/apiService';
 
 const Register: React.FC = () => {
@@ -7,6 +7,22 @@ const Register: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [csrfToken, setCsrfToken] = useState<string>('');
+
+  useEffect(() => {
+    const fetchCsrfToken = async () => {
+      try {
+        const token = await apiService.getCsrfToken();
+        setCsrfToken(token);
+        console.log('CSRF token:', token);
+      } catch (error) {
+        console.error('Error fetching CSRF token:', error);
+        setError('Error fetching CSRF token. Please try again.');
+      }
+    };
+
+    fetchCsrfToken();
+  }, []); // Fetch CSRF token only once when component mounts
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +42,7 @@ const Register: React.FC = () => {
     }
 
     try {
-      const registrationResult = await apiService.registerUser(username, password);
+      const registrationResult = await apiService.registerUser(username, password, csrfToken);
       console.log('Registration result:', registrationResult); // Log registration result
       setLoading(false);
       // Check if the response contains the 'message' key and display it

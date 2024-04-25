@@ -9,6 +9,7 @@ from django.core.management.base import BaseCommand
 
 class UserCredentials(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    username = models.CharField(max_length=150,default="")
     password = models.CharField(max_length=100)
 
     def __str__(self):

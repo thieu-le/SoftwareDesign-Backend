@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+</head>
+<body>
+    <h2>User Profile</h2>
+    <form method="post" id="profile-form">
+        {% csrf_token %}
+        <div>
+            <label for="fullName">Full Name (Max 50 characters)</label>
+            <input type="text" id="fullName" placeholder="Full Name" required>
+        </div>
+        <div>
+            <label for="address1">Address 1 (Max 100 characters)</label>
+            <input type="text" id="address1" placeholder="Address 1" required>
+        </div>
+        <div>
+            <label for="address2">Address 2 (Max 100 characters)</label>
+            <input type="text" id="address2" placeholder="Address 2">
+        </div>
+        <div>
+            <label for="city">City (Max 100 characters)</label>
+            <input type="text" id="city" placeholder="City" required>
+        </div>
+        <div>
+            <label for="state">State</label>
+            <select id="state" required>
+                <option value="">Select State</option>
+                <!-- Add options for states here -->
+            </select>
+        </div>
+        <div>
+            <label for="zipcode">Zipcode (Min 5 characters)</label>
+            <input type="text" id="zipcode" placeholder="Zipcode" minlength="5" required>
+        </div>
+        <button type="submit">Save</button>
+    </form>
+    <script src="path/to/your/bundle.js"></script> <!-- Replace "path/to/your/bundle.js" with the actual path to your bundled JavaScript file -->
+</body>
+</html>

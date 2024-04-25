@@ -28,7 +28,6 @@ const apiService = {
       const formData = new FormData();
       formData.append('username', username);
       formData.append('password', password);
-  
       const response = await axios.post(BASE_URL + 'register/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',

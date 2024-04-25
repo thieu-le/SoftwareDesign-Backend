@@ -104,9 +104,36 @@ def delete_client_profile(request, profile_uuid):
 @login_required
 def fuel_quote_form(request):
     if request.method == 'POST':
-        # Handle form submission and calculations (not shown)
-        pass
-    return render(request, 'fuel_quote_form.html')
+        gallons_requested = float(request.POST['gallons_requested'])
+        delivery_date = request.POST['delivery_date']
+        current_price_per_gallon = 1.50  # Constant
+        company_profit_factor = 0.10  # Constant
+        
+        # Get user's profile information
+        user_profile = ClientProfile.objects.get(user=request.user)
+        location_factor = 0.02 if user_profile.state.name == 'Texas' else 0.04
+        
+        # Check rate history
+        rate_history_factor = 0.01 if FuelQuote.objects.filter(client=user_profile).exists() else 0
+        
+        # Calculate gallons requested factor
+        gallons_requested_factor = 0.02 if gallons_requested > 1000 else 0.03
+        
+        # Calculate margin
+        margin = current_price_per_gallon * (location_factor - rate_history_factor + gallons_requested_factor + company_profit_factor)
+        
+        # Calculate suggested price
+        suggested_price = current_price_per_gallon + margin
+        
+        # Create a new fuel quote instance
+        new_fuel_quote = FuelQuote(client=user_profile, gallons_requested=gallons_requested, 
+                                   delivery_date=delivery_date, suggested_price_per_gallon=suggested_price, 
+                                   total_amount_due=gallons_requested * suggested_price)
+        new_fuel_quote.save()
+        
+        return redirect('fuel_quote_list')  # Redirect to fuel quote list page or wherever you want
+    else:
+        return render(request, 'fuel_quote_form.html')
 
 # Define the quote_history function
 @login_required

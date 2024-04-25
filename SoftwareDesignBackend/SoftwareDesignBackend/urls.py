@@ -1,6 +1,5 @@
 from django.urls import path, include
 from myapp import views  # Import views from your app
-from myapp.views import get_csrf_token
 
 urlpatterns = [
     path('', include('myapp.urls')),  # Make sure this line is correctly configured

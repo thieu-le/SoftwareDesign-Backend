@@ -139,16 +139,18 @@ def delete_client_profile(request, profile_uuid):
 
 # Define the fuel_quote_form function
 def fuel_quote_form(request):
+    print(request.POST)
     if request.method == 'POST':
+        
         try:
+
             # Get data from request
             profile_uuid = request.POST.get('profile_uuid')
             profile = get_object_or_404(ClientProfile, pk=profile_uuid)
             gallons_requested = float(request.POST['gallons_requested'])
-            delivery_date = request.POST['delivery_date']
-            
+            print(profile_uuid,profile,gallons_requested)
             # Call service function to calculate fuel quote
-            quote_data = calculate_fuel_quote_service(profile, gallons_requested, delivery_date)
+            quote_data = calculate_fuel_quote_service(profile, gallons_requested)
             
             # Prepare response data
             response_data = {

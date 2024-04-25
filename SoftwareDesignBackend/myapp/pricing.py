@@ -2,6 +2,7 @@ from .models import ClientProfile, FuelQuote
 
 def calculate_fuel_quote_service(client_profile: ClientProfile, gallons_requested: float):
     current_price_per_gallon = 1.50  # Constant
+    print("yes")
     company_profit_factor = 0.10  # Constant
     
     # State-based location factor
@@ -14,11 +15,13 @@ def calculate_fuel_quote_service(client_profile: ClientProfile, gallons_requeste
     gallons_requested_factor = 0.02 if gallons_requested > 1000 else 0.03
     
     # Calculate margin
-    margin = current_price_per_gallon * (location_factor - rate_history_factor + gallons_requested_factor + company_profit_factor)
+    margin = current_price_per_gallon * ((location_factor - rate_history_factor) + gallons_requested_factor + company_profit_factor)
+
     
     # Calculate suggested price
-    suggested_price = current_price_per_gallon + margin
-    
+    # suggested_price = current_price_per_gallon + margin
+    suggested_price = 555.00
+    print(suggested_price)
     # Calculate total amount due
     total_amount_due = gallons_requested * suggested_price
     

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fuel Quote Form</title>
+</head>
+<body>
+    <h2>Fuel Quote Form</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label for="id_userState">User State:</label>
+            {{ form.userState }}
+        </div>
+        <div>
+            <label for="id_hasRateHistory">Has Rate History:</label>
+            {{ form.hasRateHistory }}
+        </div>
+        <div>
+            <label for="id_gallonsRequested">Gallons Requested:</label>
+            {{ form.gallonsRequested }}
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import './styles.css';
-
+import apiService from '../services/apiService';
 interface FuelQuoteFormProps {
     clientProfile: {
         deliveryAddress: string;
@@ -58,20 +58,28 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> = ({ clientProfile }) => {
         setDeliveryAddress(value);
     };
 
-    const handleGetQuote = () => {
+    const handleGetQuote = async () => {
         setLoading(true);
         try {
-            // Call the local pricing function
-            const { suggestedPrice, totalAmountDue } = calculateFuelQuote(deliveryAddress, rateHistory, gallonsRequested as number);
-
-            setSuggestedPrice(suggestedPrice);
-            setTotalAmountDue(totalAmountDue);
+          // Construct quoteData object
+          const quoteData = {
+            deliveryAddress: deliveryAddress,
+            rateHistory: rateHistory,
+            gallonsRequested: gallonsRequested as number
+          };
+      
+          // Call the backend API to calculate fuel quote
+          const { suggestedPrice, totalAmountDue } = await apiService.calculateFuelQuote(quoteData);
+      
+          // Update state with the response data
+          setSuggestedPrice(suggestedPrice);
+          setTotalAmountDue(totalAmountDue);
         } catch (error) {
-            console.error('Error calculating fuel quote:', error);
+          console.error('Error calculating fuel quote:', error);
         } finally {
-            setLoading(false);
+          setLoading(false);
         }
-    };
+      };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();

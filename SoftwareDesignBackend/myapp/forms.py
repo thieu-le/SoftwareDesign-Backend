@@ -15,3 +15,8 @@ class RegistrationForm(forms.Form):
 class LoginForm(forms.Form):
     username = forms.CharField(label='Username', max_length=100)
     password = forms.CharField(label='Password', max_length=100, widget=forms.PasswordInput)
+
+class FuelQuoteForm(forms.Form):
+    userState = forms.CharField(label='User State', max_length=100)
+    hasRateHistory = forms.BooleanField(label='Has Rate History', required=False)
+    gallonsRequested = forms.FloatField(label='Gallons Requested')

@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import './styles.css';
 import apiService from '../services/apiService';
+
 interface FuelQuoteFormProps {
     clientProfile: {
         deliveryAddress: string;
+        state: string;
     };
 }
 
@@ -33,13 +35,15 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> = ({ clientProfile }) => {
     const [totalAmountDue, setTotalAmountDue] = useState<number | ''>('');
     const [deliveryAddress, setDeliveryAddress] = useState(clientProfile.deliveryAddress);
     const [loading, setLoading] = useState<boolean>(false);
-    const [rateHistory, setRateHistory] = useState<boolean>(false);
+    //const [rateHistory,   setRateHistory] = useState<boolean>(false);
 
+    // Gallon Input
     const gallonChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setGallonsRequested(value === '' ? '' : Number(value));
     };
 
+    // Delivery Date Input
     const handleDeliveryDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let value = e.target.value;
         value = value.replace(/[^\d/]/g, '');
@@ -53,34 +57,22 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> = ({ clientProfile }) => {
         setDeliveryDate(value);
     };
 
-    const handleDeliveryAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        setDeliveryAddress(value);
-    };
 
     const handleGetQuote = async () => {
         setLoading(true);
         try {
-          // Construct quoteData object
-          const quoteData = {
-            deliveryAddress: deliveryAddress,
-            rateHistory: rateHistory,
-            gallonsRequested: gallonsRequested as number
-          };
-      
-          // Call the backend API to calculate fuel quote
-          const { suggestedPrice, totalAmountDue } = await apiService.calculateFuelQuote(quoteData);
-      
-          // Update state with the response data
-          setSuggestedPrice(suggestedPrice);
-          setTotalAmountDue(totalAmountDue);
+            const { suggestedPrice, totalAmountDue } = calculateFuelQuote(clientProfile.state, false, Number(gallonsRequested));
+
+            setSuggestedPrice(suggestedPrice);
+            setTotalAmountDue(totalAmountDue);
         } catch (error) {
-          console.error('Error calculating fuel quote:', error);
+            console.error('Error calculating fuel quote:', error);
         } finally {
-          setLoading(false);
+            setLoading(false);
         }
       };
 
+    // Handle Form Submission
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         // Submit the form data
@@ -104,10 +96,9 @@ const FuelQuoteForm: React.FC<FuelQuoteFormProps> = ({ clientProfile }) => {
                     <label htmlFor="deliveryAddress">Delivery Address</label>
                     <input
                         type="text"
-                        id="deliveryAddress"
-                        value={deliveryAddress}
-                        onChange={handleDeliveryAddressChange}
-                        required
+                    id="deliveryAddress"
+                    value={deliveryAddress} // Display the user's delivery address
+                    readOnly
                     />
                 </div>
                 <div>

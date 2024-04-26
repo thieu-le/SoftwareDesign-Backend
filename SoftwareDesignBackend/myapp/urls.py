@@ -14,6 +14,6 @@ urlpatterns = [
     path('profile/', create_client_profile, name='create_client_profile'),
     path('my-view/', MyView.as_view(), name='my-view'),
     # Add fuel quote URLs
-    path('calculateFuelQuote/', fuel_quote_form, name='calculate_fuel_quote'),
+    path('fuel_quote_form/', fuel_quote_form, name='fuel_quote_form'),
     path('quote-history/', quote_history, name='quote_history'),
 ]

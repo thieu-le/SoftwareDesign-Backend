@@ -61,18 +61,12 @@ def index(request):
 # @login_required
 # @csrf_protect
 def create_client_profile(request):
-    print("Session data:", request.POST)
-    
     if request.method == 'POST':
         serializer = ClientProfileSerializer(data=request.POST)
-        if not serializer.is_valid():
-            print("Serializer is not valid")
-            print(serializer.errors)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
-
     return JsonResponse({'error': 'Only POST method is allowed'}, status=405)
 
 
@@ -168,10 +162,22 @@ def fuel_quote_form(request):
 # Define the quote_history function
 @login_required
 def quote_history(request):
-    client_quotes = FuelQuote.objects.filter(client=request.user.clientprofile)
-    print(request)
-    # return render(request, 'quote_history.html', {'client_quotes': client_quotes})
-    return JsonResponse(request)
+    try:
+        client_profile = request.user.clientprofile
+        client_quotes = FuelQuote.objects.filter(client=client_profile)
+        fuel_quote_data = [
+            {
+                'gallonsRequested': quote.gallons_requested,
+                'deliveryAddress': quote.delivery_address,
+                'deliveryDate': quote.delivery_date,
+                'suggestedPrice': quote.suggested_price_per_gallon,
+                'totalAmountDue': quote.total_amount_due
+            }
+            for quote in client_quotes
+        ]
+        return JsonResponse(fuel_quote_data, safe=False)
+    except ClientProfile.DoesNotExist:
+        return JsonResponse({'error': 'User does not have a client profile'}, status=400)
 
 def get_csrf_token(request):
     # Get the CSRF token

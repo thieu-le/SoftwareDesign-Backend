@@ -2,10 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext as _
-from django.core.management.base import BaseCommand
-
-# Your models go here
-
 
 class UserCredentials(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -15,13 +11,13 @@ class UserCredentials(models.Model):
     def __str__(self):
         return self.user.username
 
-
 class State(models.Model):
     name = models.CharField(max_length=100)
-    abbreviation = models.CharField(max_length=10, null=True)  # Allow NULL values for abbreviation
+    abbreviation = models.CharField(max_length=10, null=True)
 
     def __str__(self):
         return self.name
+
 class ClientProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=255, default="")
@@ -41,3 +37,6 @@ class FuelQuote(models.Model):
     suggested_price_per_gallon = models.DecimalField(max_digits=10, decimal_places=2)
     total_amount_due = models.DecimalField(max_digits=10, decimal_places=2)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Fuel Quote for {self.client.full_name} on {self.delivery_date}"

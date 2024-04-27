@@ -16,6 +16,11 @@ urlpatterns = [
     path('csrf/token/', csrf_token_view, name='csrf_token'),
     path('profile/', create_client_profile, name='create_client_profile'),
     path('my-view/', MyView.as_view(), name='my-view'),
+<<<<<<< HEAD
     path('calculateFuelQuote/', fuel_quote_form, name='calculate_fuel_quote'),
+=======
+    # Add fuel quote URLs
+    path('fuel_quote_form/', fuel_quote_form, name='fuel_quote_form'),
+>>>>>>> 803aecba349f590a3d5c75a56ce02fbece35d949
     path('quote-history/', quote_history, name='quote_history'),
 ]

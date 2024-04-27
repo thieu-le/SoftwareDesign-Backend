@@ -133,29 +133,19 @@ def delete_client_profile(request, profile_uuid):
 
 # Define the fuel_quote_form function
 def fuel_quote_form(request):
-    if request.method == 'POST':
-        try:
-            # Get data from request
-            profile_uuid = request.POST.get('profile_uuid')
-            profile = get_object_or_404(ClientProfile, pk=profile_uuid)
-            gallons_requested = float(request.POST['gallons_requested'])
-            delivery_date = request.POST['delivery_date']
-            
-            # Call service function to calculate fuel quote
-            quote_data = calculate_fuel_quote_service(profile, gallons_requested, delivery_date)
-            
-            # Prepare response data
-            response_data = {
-                'success': True,
-                'quote_data': quote_data
-            }
-            return JsonResponse(response_data)
-        except Exception as e:
-            # Handle exceptions
-            return JsonResponse({'success': False, 'error': str(e)}, status=400)
+    if request.user.is_authenticated:
+        client_profile = {
+            'full_name': request.user.clientprofile.full_name,
+            'address1': request.user.clientprofile.address1,
+            'address2': request.user.clientprofile.address2,
+            'city': request.user.clientprofile.city,
+            'state': request.user.clientprofile.state,
+            'zipcode': request.user.clientprofile.zipcode,
+        }
+        return JsonResponse(client_profile)
     else:
-        # Method not allowed
-        return JsonResponse({'success': False, 'error': 'Only POST method is allowed'}, status=405)
+        return JsonResponse({'error': 'User not authenticated'}, status=401)
+
 
 
 

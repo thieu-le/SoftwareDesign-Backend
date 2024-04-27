@@ -124,9 +124,18 @@ const apiService = {
   
 
   calculateFuelQuote: async (quoteData: any) => {
+    console.log(quoteData)
     try {
-      const response = await axios.post(BASE_URL + 'calculateFuelQuote', quoteData);
-      return response.data;
+      const formData = new FormData();
+      Object.entries(quoteData).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+      const response = await axios.post(BASE_URL + 'calculateFuelQuote/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data' // Set the content type to multipart/form-data
+        }
+      });
+        return response.data;
     } catch (error) {
       console.error('Error calculating fuel quote:', error);
       throw error;
